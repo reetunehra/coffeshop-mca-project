@@ -8,15 +8,15 @@ import dotenv
 dotenv.load_dotenv()
 
 
-class GuardAgent():
+class GuardAgent:
     def __init__(self):
         self.client = OpenAI(
             api_key=os.getenv("RUNPOD_TOKEN"),
             base_url=os.getenv("API_URL_CHATBOT"),
         )
         self.model_name = os.getenv("MODEL_NAME")
-    
-    def get_response(self,messages):
+
+    def get_response(self, messages):
         messages = deepcopy(messages)
 
         system_prompt = """
@@ -39,21 +39,21 @@ class GuardAgent():
             "message": "Your natural language reply to the user here." if it's allowed, otherwise write "Sorry, I can't help with that. Can I help you with your order?"
             }
             """
-        
+
         input_messages = [{"role": "system", "content": system_prompt}] + messages[-3:]
         input_messages = ensure_alternating_roles(input_messages)
-        chatbot_output =get_chatbot_response(self.client,self.model_name,input_messages)
+        chatbot_output = get_chatbot_response(
+            self.client, self.model_name, input_messages
+        )
         output = self.postprocess(chatbot_output)
-        
+
         return output
 
-    def postprocess(self,output):
+    def postprocess(self, output):
         output = json.loads(output)
         dict_output = {
             "role": "assistant",
-            "content": output['message'],
-            "memory": {"agent":"guard_agent",
-                       "guard_decision": output['decision']
-                      }
+            "content": output["message"],
+            "memory": {"agent": "guard_agent", "guard_decision": output["decision"]},
         }
         return dict_output

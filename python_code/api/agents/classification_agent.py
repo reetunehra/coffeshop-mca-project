@@ -2,13 +2,17 @@ from openai import OpenAI
 import os
 import json
 from copy import deepcopy
-from .utilis import ensure_alternating_roles, get_chatbot_response, double_check_json_output
+from .utilis import (
+    ensure_alternating_roles,
+    get_chatbot_response,
+    double_check_json_output,
+)
 import dotenv
 
 dotenv.load_dotenv()
 
 
-class ClassificationAgent():
+class ClassificationAgent:
     def __init__(self):
         self.client = OpenAI(
             api_key=os.getenv("RUNPOD_TOKEN"),
@@ -40,24 +44,23 @@ class ClassificationAgent():
         chatbot_output = get_chatbot_response(
             self.client, self.model_name, input_messages
         )
-        chatbot_output = double_check_json_output(self.client,self.model_name,chatbot_output)
+        chatbot_output = double_check_json_output(
+            self.client, self.model_name, chatbot_output
+        )
         output = self.postprocess(chatbot_output)
 
         return output
 
     def postprocess(self, output):
         # print("CLASSIFICATION OUTPUT: ",output)
-
         output_dict = json.loads(output)
-
 
         dict_output = {
             "role": "assistant",
-            "content": output_dict['message'],
+            "content": output_dict["message"],
             "memory": {
                 "agent": "classification_agent",
-                "classification_decision": output_dict['decision'],
+                "classification_decision": output_dict["decision"],
             },
         }
-
         return dict_output

@@ -1,13 +1,15 @@
 import os
 import json
-from .utilis import get_chatbot_response,double_check_json_output
+from .utilis import get_chatbot_response, double_check_json_output
 from openai import OpenAI
 from copy import deepcopy
 from dotenv import load_dotenv
+
 load_dotenv()
 
-class OrderTakingAgent():
-    def __init__(self,recommendation_agent):
+
+class OrderTakingAgent:
+    def __init__(self, recommendation_agent):
         self.client = OpenAI(
             api_key=os.getenv("RUNPOD_TOKEN"),
             base_url=os.getenv("API_URL_CHATBOT"),
@@ -16,7 +18,7 @@ class OrderTakingAgent():
 
         self.recommendation_agent = recommendation_agent
 
-    def get_response(self,messages):
+    def get_response(self, messages):
         messages = deepcopy(messages)
 
         system_prompt = """
@@ -24,25 +26,25 @@ class OrderTakingAgent():
 
             here is the menu for this coffee shop.
 
-            Cappuccino - $4.50
-            Jumbo Savory Scone - $3.25
-            Latte - $4.75
-            Chocolate Chip Biscotti - $2.50
-            Espresso shot - $2.00
-            Hazelnut Biscotti - $2.75
-            Chocolate Croissant - $3.75
-            Dark chocolate (Drinking Chocolate) - $5.00
-            Cranberry Scone - $3.50
-            Croissant - $3.25
-            Almond Croissant - $4.00
-            Ginger Biscotti - $2.50
-            Oatmeal Scone - $3.25
-            Ginger Scone - $3.50
-            Chocolate syrup - $1.50
-            Hazelnut syrup - $1.50
-            Carmel syrup - $1.50
-            Sugar Free Vanilla syrup - $1.50
-            Dark chocolate (Packaged Chocolate) - $3.00
+            Cappuccino - ₹385
+            Jumbo Savory Scone - ₹280
+            Latte - ₹410
+            Chocolate Chip Biscotti - ₹215
+            Espresso shot - ₹171
+            Hazelnut Biscotti - ₹235
+            Chocolate Croissant - ₹320
+            Dark chocolate (Drinking Chocolate) - ₹430
+            Cranberry Scone - ₹300
+            Croissant - ₹280
+            Almond Croissant - ₹342
+            Ginger Biscotti - ₹215
+            Oatmeal Scone - ₹280
+            Ginger Scone - ₹300
+            Chocolate syrup - ₹130
+            Hazelnut syrup - ₹130
+            Carmel syrup - ₹130
+            Sugar Free Vanilla syrup - ₹130
+            Dark chocolate (Packaged Chocolate) - ₹258
 
             Things to NOT DO:
             * DON't ask how to pay by cash or Card.
@@ -77,52 +79,66 @@ class OrderTakingAgent():
         """
 
         last_order_taking_status = ""
-        asked_recommendation_before=False
-        for message_index in range(len(messages)-1,0,-1):
+        asked_recommendation_before = False
+        for message_index in range(len(messages) - 1, 0, -1):
             message = messages[message_index]
 
-            agent_name = message.get("memory",{}).get("agent","")
+            agent_name = message.get("memory", {}).get("agent", "")
             if message["role"] == "assistant" and agent_name == "order_taking_agent":
                 step_number = message["memory"]["step number"]
                 order = message["memory"]["order"]
-                asked_recommendation_before = message["memory"]["asked_recommendation_before"]
+                asked_recommendation_before = message["memory"][
+                    "asked_recommendation_before"
+                ]
                 last_order_taking_status = f"""
                 step number : {step_number}
                 order : {order}
                 """
 
-        messages[-1]['content'] = last_order_taking_status + "\n" + messages[-1]['content']
-        input_messages = [{"role":"system", "content":system_prompt}]+messages
+        messages[-1]["content"] = (
+            last_order_taking_status + "\n" + messages[-1]["content"]
+        )
+        input_messages = [{"role": "system", "content": system_prompt}] + messages
 
-        chatbot_response = get_chatbot_response(self.client,self.model_name,input_messages)
-        #double check json
-        chatbot_response =double_check_json_output(self.client,self.model_name,chatbot_response)
+        chatbot_response = get_chatbot_response(
+            self.client, self.model_name, input_messages
+        )
+        # double check json
+        chatbot_response = double_check_json_output(
+            self.client, self.model_name, chatbot_response
+        )
 
-        output = self.postprocess(chatbot_response,messages,asked_recommendation_before)
+        output = self.postprocess(
+            chatbot_response, messages, asked_recommendation_before
+        )
 
         return output
-    
-    def postprocess(self,output,messages,asked_recommendation_before):
+
+    def postprocess(self, output, messages, asked_recommendation_before):
         output = json.loads(output)
 
-        if type(output['order'])==str:
-            output['order']=json.loads(output['order'])
+        if type(output["order"]) == str:
+            output["order"] = json.loads(output["order"])
 
         response = output["response"]
-        if not asked_recommendation_before and len(output["order"])>0:
-            recommendation_output = self.recommendation_agent.get_recommendations_from_order(messages,output["order"])
-            response = recommendation_output['content']
-            asked_recommendation_before=True
+        if not asked_recommendation_before and len(output["order"]) > 0:
+            recommendation_output = (
+                self.recommendation_agent.get_recommendations_from_order(
+                    messages, output["order"]
+                )
+            )
+            response = recommendation_output["content"]
+            asked_recommendation_before = True
 
         dict_output = {
-            "role":"assistant",
-            "content":response,
+            "role": "assistant",
+            "content": response,
             "memory": {
-                "agent":"order_taking_agent",
-                "step number":output["step number"],
+                "agent": "order_taking_agent",
+                "step number": output["step_number"],
                 "asked_recommendation_before": asked_recommendation_before,
-                "order":output["order"],
-            }
+                "order": output["order"],
+            },
         }
 
         return dict_output

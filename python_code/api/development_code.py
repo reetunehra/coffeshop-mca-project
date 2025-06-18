@@ -1,33 +1,37 @@
-from agents._init_ import (GuardAgent,
-                           ClassificationAgent,
-                           DetailsAgent,
-                           AgentProtocol,
-                           RecommendationAgent,
-                           OrderTakingAgent
-                           )
+from agents._init_ import (
+    GuardAgent,
+    ClassificationAgent,
+    DetailsAgent,
+    AgentProtocol,
+    RecommendationAgent,
+    OrderTakingAgent,
+)
 from typing import Dict
 import os
 import pathlib
+
 folder_path = pathlib.Path(__file__).parent.resolve()
+
 
 def main():
     guard_agent = GuardAgent()
     classification_agent = ClassificationAgent()
-    recommendation_agent = RecommendationAgent( 
-                                    os.path.join(folder_path,'recommendation_objects/apriori_recommendation.json'),
-                                    os.path.join(folder_path,'recommendation_objects/popularity_recommendation.csv')
-                                )
+    recommendation_agent = RecommendationAgent(
+        os.path.join(folder_path, "recommendation_objects/apriori_recommendation.json"),
+        os.path.join(
+            folder_path, "recommendation_objects/popularity_recommendation.csv"
+        ),
+    )
 
     agent_dict: Dict[str, AgentProtocol] = {
         "details_agent": DetailsAgent(),
         "recommendation_agent": recommendation_agent,
-        "order_taking_agent": OrderTakingAgent(recommendation_agent)
-
-        }
+        "order_taking_agent": OrderTakingAgent(recommendation_agent),
+    }
 
     messages = []
     while True:
-        os.system("cls" if os.name == "nt" else "clear")
+        # os.system("cls" if os.name == "nt" else "clear")
 
         print("\n\n Print Message ............")
         for message in messages:
@@ -55,9 +59,5 @@ def main():
         messages.append(response)
 
 
-
 if __name__ == "__main__":
     main()
-
-
-    
