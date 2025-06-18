@@ -1,5 +1,5 @@
 
-# Coffee Shop Customer Service Chatbot 🚀☕️
+# MCA-Project Coffee Shop Customer Service Chatbot 🚀☕️
 
 Welcome to the Coffee Shop Customer Service Chatbot project! This repository contains the code, resources, and instructions to build an AI-powered chatbot designed to enhance customer experiences in a coffee shop app. Leveraging the power of LLMs (Large Language models), Natural Language Processing (NLP), and RunPod's infrastructure, this chatbot can assist with taking orders, answering detailed menu queries, and providing personalized product recommendations—all within a React Native mobile app.
 
@@ -75,10 +75,37 @@ The React Native Coffee Shop App serves as the front-end interface for customers
 ```
 
 ## 🚀 Getting Started
-Each folder has their own getting started section. So this way we can deploy the front end, backend and setup individually. 
+Each folder has their own getting started section. So this way we can deploy the front end, backend and setup individually.
+## Enviorment Variables 
+   **Backend:**
+* PINECONE_API_KEY=""
+* PINECONE_INDEX_NAME=""
+* API_URL_CHATBOT=""
+* RUNPOD_EMBEDDING_URL=""
+* RUNPOD_TOKEN=""
+* MODEL_NAME="mistralai/Mistral-7B-Instruct-v0.3"
+* FIREBASE_TYPE= ""
+* FIREBASE_PROJECT_ID=""
+* FIREBASE_PRIVATE_KEY_ID=""
+* FIREBASE_PRIVATE_KEY=""
+* FIREBASE_CLIENT_EMAIL=""
+* FIREBASE_CLIENT_ID=""
+* FIREBASE_AUTH_URI=""
+* FIREBASE_TOKEN_URI=""
+* FIREBASE_AUTH_PROVIDER_X509_CERT_URL=""
+* FIREBASE_CLIENT_X509_CERT_URL=""
+* FIREBASE_UNIVERSE_DOMAIN=""
+
+   **Frontend:**
+* PINECONE_API_KEY=""
+* PINECONE_INDEX_NAME=""
+* API_URL_CHATBOT=""
+* RUNPOD_EMBEDDING_URL=""
+* RUNPOD_TOKEN=""
+* MODEL_NAME="mistralai/Mistral-7B-Instruct-v0.3"
 
 ## 🔗 Refrence Links
-* [RunPod](https://rebrand.ly/Runpod-Abdullah): RunPod Official Site - Infrastructure for deploying and scaling machine learning models.
+* [RunPod](https://www.runpod.io/): RunPod Official Site - Infrastructure for deploying and scaling machine learning models.
 * [Kaggle Dataset]([https://www.kaggle.com/datasets/ylchang/](https://www.kaggle.com/datasets/ylchang/coffee-shop-sample-data-1113)): Source of the dataset used for training the recommendation engine.
 * [Figma app design](https://www.figma.com/design/PKEMJtsntUgQcN5xAIelkx/Coffee-Shop-Mobile-App-Design-(Community)?node-id=421-1221&node-type=FRAME&t=bakGV2g59KQ7cPBi-0): - The design mockups for the coffee shop app, providing a visual guide for the user interface and experience.
 * [Hugging Face](https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct): Hugging Face Models - Repository for Llama LLms, a state-of-the-art NLP model used in our chatbot.
